@@ -11,6 +11,10 @@ const rglr = readFileSync(`${__dirname}/../_fonts/Inter-Regular.woff2`).toString
 const bold = readFileSync(`${__dirname}/../_fonts/Inter-Bold.woff2`).toString('base64');
 const mono = readFileSync(`${__dirname}/../_fonts/Vera-Mono.woff2`).toString('base64');
 
+const nsjpBold = readFileSync(`${__dirname}/../_fonts/Noto_Sans_JP/NotoSansJP-Bold.woff2`).toString('base64');
+const nsjpMedium = readFileSync(`${__dirname}/../_fonts/Noto_Sans_JP/NotoSansJP-Medium.woff2`).toString('base64');
+const nsjpLight = readFileSync(`${__dirname}/../_fonts/Noto_Sans_JP/NotoSansJP-Light.woff2`).toString('base64');
+
 function getCss(theme: string, fontSize: string) {
     let background = 'white';
     let foreground = 'black';
@@ -41,7 +45,28 @@ function getCss(theme: string, fontSize: string) {
         font-style: normal;
         font-weight: normal;
         src: url(data:font/woff2;charset=utf-8;base64,${mono})  format("woff2");
-      }
+    }
+
+    @font-face {
+        font-family: 'Noto Sans JP';
+        font-style: normal;
+        font-weight: 700;
+        src: url(data:font/otf;charset=utf-8;base64,${nsjpBold}) format('woff2');
+    }
+
+    @font-face {
+        font-family: 'Noto Sans JP';
+        font-style: normal;
+        font-weight: 500;
+        src: url(data:font/otf;charset=utf-8;base64,${nsjpMedium}) format('woff2');
+    }
+
+    @font-face {
+        font-family: 'Noto Sans JP';
+        font-style: normal;
+        font-weight: 300;
+        src: url(data:font/otf;charset=utf-8;base64,${nsjpLight}) format('woff2');
+    }
 
     body {
         background: ${background};
@@ -93,9 +118,9 @@ function getCss(theme: string, fontSize: string) {
         margin: 0 .05em 0 .1em;
         vertical-align: -0.1em;
     }
-    
+
     .heading {
-        font-family: 'Inter', sans-serif;
+        font-family: 'Noto Sans JP', 'Inter', sans-serif;
         font-size: ${sanitizeHtml(fontSize)};
         font-style: normal;
         color: ${foreground};
