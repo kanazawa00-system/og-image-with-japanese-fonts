@@ -22,6 +22,10 @@ cp .env.example .env
 フォントの追加方法は[解説記事](https://blog.datsukan.me/vercel-og-image-japanese-fonts)を参照してください。  
 なお、日本語フォントはサイズが大きいので、2～3ファイルの追加に留めることを推奨します。
 
+## Author \ 著者
+
+datsukan
+
 ## ライセンス
 
 [MIT License](https://en.wikipedia.org/wiki/MIT_License)
