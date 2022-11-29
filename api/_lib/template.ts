@@ -1,29 +1,26 @@
+import {readFileSync} from 'fs';
+import {sanitizeHtml} from './sanitizer';
+import {ParsedRequest} from './types';
 
-import { readFileSync } from 'fs';
-import { marked } from 'marked';
-import { sanitizeHtml } from './sanitizer';
-import { ParsedRequest } from './types';
 const twemoji = require('twemoji');
-const twOptions = { folder: 'svg', ext: '.svg' };
+const twOptions = {folder: 'svg', ext: '.svg'};
 const emojify = (text: string) => twemoji.parse(text, twOptions);
 
 const rglr = readFileSync(`${__dirname}/../_fonts/Inter-Regular.woff2`).toString('base64');
 const bold = readFileSync(`${__dirname}/../_fonts/Inter-Bold.woff2`).toString('base64');
 const mono = readFileSync(`${__dirname}/../_fonts/Vera-Mono.woff2`).toString('base64');
-
 const nsjpBold = readFileSync(`${__dirname}/../_fonts/Noto_Sans_JP/NotoSansJP-Bold.woff2`).toString('base64');
 const nsjpMedium = readFileSync(`${__dirname}/../_fonts/Noto_Sans_JP/NotoSansJP-Medium.woff2`).toString('base64');
 const nsjpLight = readFileSync(`${__dirname}/../_fonts/Noto_Sans_JP/NotoSansJP-Light.woff2`).toString('base64');
 
+const ogBgB64 = readFileSync(`${__dirname}/../_images/og-bg.png`).toString('base64');
+const logoB64 = readFileSync(`${__dirname}/../_images/logo.png`).toString('base64');
+
 function getCss(theme: string, fontSize: string) {
-    let background = 'white';
     let foreground = 'black';
-    let radial = 'lightgray';
 
     if (theme === 'dark') {
-        background = 'black';
         foreground = 'white';
-        radial = 'dimgray';
     }
     return `
     @font-face {
@@ -69,16 +66,36 @@ function getCss(theme: string, fontSize: string) {
     }
 
     body {
-        background: ${background};
-        background-image: radial-gradient(circle at 25px 25px, ${radial} 2%, transparent 0%), radial-gradient(circle at 75px 75px, ${radial} 2%, transparent 0%);
-        background-size: 100px 100px;
+        font-family: 'Noto Sans JP', 'Inter', sans-serif;
         height: 100vh;
         display: flex;
         text-align: center;
         align-items: center;
         justify-content: center;
+        letter-spacing: 2px;
     }
-
+    
+    .container {
+         width: 100vw;
+         height: 100vh;
+         background-image: url(data:image/png;base64,${ogBgB64});
+         background-repeat: no-repeat;
+         position: relative;
+         z-index: 0;
+    }
+    .container::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        background: inherit;
+        filter: blur(8px);
+        margin: -10px;
+        z-index: -1;
+    }
+    
     code {
         color: #D400FF;
         font-family: 'Vera';
@@ -96,20 +113,15 @@ function getCss(theme: string, fontSize: string) {
         align-content: center;
         justify-content: center;
         justify-items: center;
+        margin-bottom: 30px;
     }
 
     .logo {
         margin: 0 75px;
     }
 
-    .plus {
-        color: #BBB;
-        font-family: Times New Roman, Verdana;
-        font-size: 100px;
-    }
-
     .spacer {
-        margin: 150px;
+        margin-top: 100px;
     }
 
     .emoji {
@@ -119,19 +131,27 @@ function getCss(theme: string, fontSize: string) {
         vertical-align: -0.1em;
     }
 
-    .heading {
-        font-family: 'Noto Sans JP', 'Inter', sans-serif;
+    .title {
         font-size: ${sanitizeHtml(fontSize)};
+        font-weight: 700;
         font-style: normal;
         color: ${foreground};
-        line-height: 1.8;
-    }`;
+        text-shadow: 0 0 10px #fff;
+    }
+    
+    .sub-title {
+        font-size: 25px;
+        font-weight: 500;
+        font-style: normal;
+        color: ${foreground};
+    }
+    `;
 }
 
 export function getHtml(parsedReq: ParsedRequest) {
-    const { text, theme, md, fontSize, images, widths, heights } = parsedReq;
+    const {text, theme, fontSize} = parsedReq;
     return `<!DOCTYPE html>
-<html>
+<html lang="ja">
     <meta charset="utf-8">
     <title>Generated Image</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -139,33 +159,19 @@ export function getHtml(parsedReq: ParsedRequest) {
         ${getCss(theme, fontSize)}
     </style>
     <body>
-        <div>
+        <div class="container">
             <div class="spacer">
-            <div class="logo-wrapper">
-                ${images.map((img, i) =>
-                    getPlusSign(i) + getImage(img, widths[i], heights[i])
-                ).join('')}
-            </div>
-            <div class="spacer">
-            <div class="heading">${emojify(
-                md ? marked(text) : sanitizeHtml(text)
-            )}
+                <div class="logo-wrapper">
+                    <img class="logo" alt="CyberAgent ca-srg.dev" src="data:image/png;base64,${logoB64}" width="125" height="125" />
+                </div>
+                <div class="title">${emojify(sanitizeHtml(text))}</div>
+                <p>- - -</p>
+                <div class="sub-title">
+                    <p>メディア事業の信頼性を横断的に向上する</p>
+                    <p style="font-weight: 700">CyberAgent SRG</p>
+                </div>
             </div>
         </div>
     </body>
 </html>`;
-}
-
-function getImage(src: string, width ='auto', height = '225') {
-    return `<img
-        class="logo"
-        alt="Generated Image"
-        src="${sanitizeHtml(src)}"
-        width="${sanitizeHtml(width)}"
-        height="${sanitizeHtml(height)}"
-    />`
-}
-
-function getPlusSign(i: number) {
-    return i === 0 ? '' : '<div class="plus">+</div>';
 }
