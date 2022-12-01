@@ -167,7 +167,7 @@ export function getHtml(parsedReq: ParsedRequest) {
                 <div class="title">${emojify(sanitizeHtml(text))}</div>
                 <p>- - -</p>
                 <div class="sub-title">
-                    <p>メディア事業の信頼性を横断的に向上する</p>
+                    <p>CAグループの信頼性を横断的に向上させる</p>
                     <p style="font-weight: 700">CyberAgent SRG</p>
                 </div>
             </div>
