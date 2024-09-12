@@ -1,20 +1,21 @@
-import core from 'puppeteer-core';
-import { getOptions } from './options';
+const chrome = require('@sparticuz/chromium');
+const puppeteer = require('puppeteer-core');
 import { FileType } from './types';
-let _page: core.Page | null;
 
-async function getPage(isDev: boolean) {
-    if (_page) {
-        return _page;
-    }
-    const options = await getOptions(isDev);
-    const browser = await core.launch(options);
-    _page = await browser.newPage();
-    return _page;
-}
+const getPage = async () => {
+    const browser = await puppeteer.launch({
+        args: chrome.args,
+        defaultViewport: chrome.defaultViewport,
+        executablePath: await chrome.executablePath(),
+        headless: 'new',
+        ignoreHTTPSErrors: true
+    });
+    const page = await browser.newPage();
+    return page;
+};
 
-export async function getScreenshot(html: string, type: FileType, isDev: boolean) {
-    const page = await getPage(isDev);
+export async function getScreenshot(html: string, type: FileType) {
+    const page = await getPage();
     await page.setViewport({ width: 1200, height: 630 });
     await page.setContent(html);
     return await page.screenshot({ type });
