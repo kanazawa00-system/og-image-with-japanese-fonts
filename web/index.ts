@@ -126,9 +126,8 @@ const fileTypeOptions: DropdownOption[] = [
 ];
 
 const fontSizeOptions: DropdownOption[] = Array
-    .from({length: 10})
-    .map((_, i) => i * 25)
-    .filter(n => n > 0)
+    .from({length: 20})
+    .map((_, i) => i * 5)
     .map(n => ({text: n + 'px', value: n + 'px'}));
 
 interface AppState extends ParsedRequest {
